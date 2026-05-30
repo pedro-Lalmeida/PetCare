@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+from datetime import timedelta
 import os
 from pathlib import Path
 from decouple import config
@@ -61,8 +62,27 @@ REST_FRAMEWORK = {
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning',
     'DEFAULT_VERSION': 'v1',
     'ALLOWED_VERSIONS': ['v1'],
+    
+    # PAGINAÇÃO
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+    
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
+# SWAGGER
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'PetCare API',
+    'DESCRIPTION': 'API para adoção de pets',
+    'VERSION': '1.0.0',
+    'SERVERS': [{'url': '/api/v1'}]
+}
+
+# JWT
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
 
 
 MIDDLEWARE = [
