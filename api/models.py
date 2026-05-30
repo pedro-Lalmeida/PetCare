@@ -5,7 +5,7 @@ from model_utils.models import SoftDeletableModel, SoftDeletableManager
 
 class BaseModel(SoftDeletableModel):
     objects = SoftDeletableManager
-    all_objects = models.Manager()
+    objects = models.Manager()
 
     class Meta:
         abstract = True
@@ -17,8 +17,7 @@ class Ong(BaseModel):
     email = models.CharField(max_length=50, unique=True)
     
     def __str__(self):
-        return super().__str__()
-
+        return f"{self.nome} - {self.email} - {self.endereco}"
 
 class Pet(BaseModel):
 
