@@ -10,7 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+from datetime import timedelta
+import os
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,10 +23,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-4c0@h6$&z=#us$n*mqi4ie6g!^t4%+&f*a4ya99+j%$pxt+(wu'
+SECRET_KEY = config('SECRET_KEY') 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = []
 
@@ -47,6 +50,46 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'drf_spectacular_sidecar'
 ]
+
+REST_FRAMEWORK = {
+    # Define os métodos aceitos para identificar o usuário
+    # Significa que o Django vai olhar para o cabeçalho (Header) da requisição procurando um Token válido
+    # Tranca tudo por padrão exigindo JWT
+
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning',
+    'DEFAULT_VERSION': 'v1',
+    'ALLOWED_VERSIONS': ['v1'],
+    
+    # PAGINAÇÃO
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+
+     # tipo um "tradutor" para o DRF entender meu código e gerar o swagger
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+
+}
+
+# Customização do manual (Swagger)
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'PetCare API',
+    'DESCRIPTION': 'API para cadastro de Ongs e adoção de pets',
+    'VERSION': '1.0.0',
+    #'SERVERS': [{'url': '/api/v1'}]
+}
+
+# JWT
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

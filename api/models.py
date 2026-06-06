@@ -1,3 +1,5 @@
+from django.utils import timezone
+
 from django.db import models
 from model_utils.models import SoftDeletableModel, SoftDeletableManager
 
@@ -7,7 +9,7 @@ class BaseModel(SoftDeletableModel):
     objects = SoftDeletableManager
     objects = models.Manager()
 
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
