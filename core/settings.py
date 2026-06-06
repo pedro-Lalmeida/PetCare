@@ -73,6 +73,7 @@ REST_FRAMEWORK = {
 
      # tipo um "tradutor" para o DRF entender meu código e gerar o swagger
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+
 }
 
 # Customização do manual (Swagger)
@@ -80,7 +81,7 @@ SPECTACULAR_SETTINGS = {
     'TITLE': 'PetCare API',
     'DESCRIPTION': 'API para cadastro de Ongs e adoção de pets',
     'VERSION': '1.0.0',
-    'SERVERS': [{'url': '/api/v1'}]
+    #'SERVERS': [{'url': '/api/v1'}]
 }
 
 # JWT

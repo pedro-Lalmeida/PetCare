@@ -20,14 +20,18 @@ from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
 
+from api.router import router
+
 urlpatterns = [
-    path('api/<version>/', include('api.urls')),
+    path('api/v1/', include(router.urls)),
 
-    path('api/token/', TokenObtainPairView.as_view()),
-    path('api/token/refresh/', TokenRefreshView.as_view()),
+    #  URLs de Login e Refresh Token
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
-    path('api/<version>/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('api/<version>/docs/', SpectacularSwaggerView.as_view(url_name='schema')),
+    # URLs para documentação
+    path('api/v1/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/v1/docs/', SpectacularSwaggerView.as_view(url_name='schema')),
 
     path('admin/', admin.site.urls),
 ]
