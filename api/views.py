@@ -29,8 +29,9 @@ class OngViewSet(ModelViewSet):
         
         return [IsAuthenticated()]
 
-    @method_decorator(cache_page(60))
-    @method_decorator(vary_on_headers("Authorization"))
+    # cache 
+    @method_decorator(cache_page(60))                    # define o tempo do cache
+    @method_decorator(vary_on_headers("Authorization"))  # aqui varia a resposta de acordo com os diferentes tokens
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
     
