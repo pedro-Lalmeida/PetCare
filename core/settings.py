@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_spectacular',
-    'drf_spectacular_sidecar'
+    'drf_spectacular_sidecar',
+    'django_filters'
 ]
 
 REST_FRAMEWORK = {
@@ -66,6 +67,7 @@ REST_FRAMEWORK = {
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.URLPathVersioning',
     'DEFAULT_VERSION': 'v1',
     'ALLOWED_VERSIONS': ['v1'],
+    'VERSION_PARAM': 'version',
     
     # PAGINAÇÃO
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',

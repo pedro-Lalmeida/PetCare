@@ -4,7 +4,7 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser, AllowAny
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from django.views.decorators.vary import vary_on_headers
-
+from django_filters.rest_framework import DjangoFilterBackend
 from api.models import Ong, Pet, Consulta
 from api.serializers import OngSerializer, PetSerializer, ConsultaSerializer
 
@@ -12,8 +12,25 @@ from api.serializers import OngSerializer, PetSerializer, ConsultaSerializer
 class OngViewSet(ModelViewSet):
     queryset = Ong.objects.all()
     serializer_class = OngSerializer
-    search_fields = ['nome', 'email']
-    filter_backends = [filters.SearchFilter]
+    
+    # usando query_params
+    def get_queryset(self):
+        # Começamos pegando todas as ONGs do banco
+        queryset = Ong.objects.all()
+        
+        # Captura os query_params da URL (?nome=... ou ?email=...)
+        nome_param = self.request.query_params.get('nome')
+        email_param = self.request.query_params.get('email')
+
+        # Se o usuário passou ?nome= na URL, filtramos no banco
+        if nome_param:
+            queryset = queryset.filter(nome__iexact=nome_param) # iexact ignora maiúsculas/minúsculas
+            
+        # Se o usuário passou ?email= na URL, filtramos também
+        if email_param:
+            queryset = queryset.filter(email__iexact=email_param)
+            
+        return queryset
 
     # config das permissões
     def get_permissions(self):
@@ -40,8 +57,11 @@ class OngViewSet(ModelViewSet):
 class PetViewSet(ModelViewSet):
     queryset = Pet.objects.all()
     serializer_class = PetSerializer
-    search_fields = ['nome', 'raca', 'status_adocao', 'porte']
-    filter_backends = [filters.SearchFilter]
+    
+    # usando filtros automáticos 
+    # ⚠️ não precisa sobrescrever get_queryset()
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['nome', 'raca', 'status_adocao', 'porte']
 
     # config das permissões
     def get_permissions(self):
@@ -68,8 +88,8 @@ class PetViewSet(ModelViewSet):
 class ConsultaViewSet(ModelViewSet):
     queryset = Consulta.objects.all()
     serializer_class = ConsultaSerializer
-    search_fields = ['veterinario', 'status', 'pet__nome']
-    filter_backends = [filters.SearchFilter]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['data_hora', 'veterinario', 'motivo', 'status']
 
     # config das permissões
     permission_classes = [IsAuthenticated]
