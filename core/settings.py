@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     # app
     'api',
 
-    # terceiros
+    # DRF
     'rest_framework',
     'rest_framework_simplejwt',
     'drf_spectacular',
@@ -76,7 +76,12 @@ REST_FRAMEWORK = {
      # tipo um "tradutor" para o DRF entender meu código e gerar o swagger
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 
+    'DEFAULT_FILTER_BACKENDS':
+    ['django_filters.rest_framework.DjangoFilterBackend'],
+
 }
+
+
 
 # Customização do manual (Swagger)
 SPECTACULAR_SETTINGS = {

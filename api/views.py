@@ -32,22 +32,26 @@ class OngViewSet(ModelViewSet):
             
         return queryset
 
-    # config das permissões
+    # Permissões
     def get_permissions(self):
+
         """
         Bloqueia a criação/edição de ONGs para administradores, 
         mas permite a listagem para qualquer usuário logado.
         
         Isso diz ao Django: "Para continuar com essa operação de escrita, 
         o usuário obrigatoriamente precisa estar logado e ser um administrador no seu perfil"
+
+        se não entrar nesse caso apenas pede uma autenticação normal
         """
+
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
             return [IsAdminUser()]
         
         return [IsAuthenticated()]
 
-    # cache 
-    @method_decorator(cache_page(60))                    # define o tempo do cache
+    # cache de 5 min
+    @method_decorator(cache_page(60*5))                    # define o tempo do cache
     @method_decorator(vary_on_headers("Authorization"))  # aqui varia a resposta de acordo com os diferentes tokens
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
@@ -58,10 +62,28 @@ class PetViewSet(ModelViewSet):
     queryset = Pet.objects.all()
     serializer_class = PetSerializer
     
-    # usando filtros automáticos 
-    # ⚠️ não precisa sobrescrever get_queryset()
-    filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['nome', 'raca', 'status_adocao', 'porte']
+    # query_params
+    def get_queryset(self):
+        queryset = Pet.objects.all()
+
+        nome = self.request.query_params.get('nome')
+        raca = self.request.query_params.get('raca')
+        porte = self.request.query_params.get('porte')
+        status = self.request.query_params.get('status_adocao')
+
+        if nome:
+            queryset = queryset.filter(nome__icontains=nome)
+
+        if raca:
+            queryset = queryset.filter(raca__icontains=raca)
+
+        if porte:
+            queryset = queryset.filter(porte__iexact=porte)
+
+        if status:
+            queryset = queryset.filter(status_adocao__iexact=status)
+
+        return queryset
 
     # config das permissões
     def get_permissions(self):
@@ -70,15 +92,17 @@ class PetViewSet(ModelViewSet):
         Bloqueia a criação/edição de ONGs para administradores, 
         mas permite a listagem para qualquer usuário logado.
         
-        Isso diz ao Django: "Para continuar com essa operação de escrita, 
-        o usuário obrigatoriamente precisa estar logado e ser um administrador no seu perfil"
+        Para continuar com essa operação de escrita, 
+        o usuário obrigatoriamente precisa estar logado e ser um administrador no seu perfil
         """
+
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
             return [IsAdminUser()]
         
         return [IsAuthenticated()]
 
-    @method_decorator(cache_page(60))
+    # cache de 5 min
+    @method_decorator(cache_page(60*5))
     @method_decorator(vary_on_headers("Authorization"))
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)
@@ -88,13 +112,16 @@ class PetViewSet(ModelViewSet):
 class ConsultaViewSet(ModelViewSet):
     queryset = Consulta.objects.all()
     serializer_class = ConsultaSerializer
+
+    # filtros automáticos
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['data_hora', 'veterinario', 'motivo', 'status']
 
-    # config das permissões
+    # permissões para essa viewset
     permission_classes = [IsAuthenticated]
 
-    @method_decorator(cache_page(60))
+    # cache de 5 min
+    @method_decorator(cache_page(60*5))
     @method_decorator(vary_on_headers("Authorization"))
     def list(self, request, *args, **kwargs):
         return super().list(request, *args, **kwargs)

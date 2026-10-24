@@ -4,7 +4,6 @@ from django.db import models
 from model_utils.models import SoftDeletableModel, SoftDeletableManager
 
 
-# BASE MODEL
 class BaseModel(SoftDeletableModel):
 
    # Manager padrão (esconde os removidos) 
