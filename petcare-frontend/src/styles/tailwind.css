@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+@theme {
+  --color-petcare-primary: #16a34a;
+  --color-petcare-dark: #14532d;
+  --color-petcare-background: #f8fafc;
+}

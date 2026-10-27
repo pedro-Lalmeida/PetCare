@@ -89,12 +89,16 @@ class PetViewSet(ModelViewSet):
     def get_permissions(self):
         
         """
-        Bloqueia a criação/edição de ONGs para administradores, 
+        Bloqueia a criação/edição de Pets para administradores, 
         mas permite a listagem para qualquer usuário logado.
         
         Para continuar com essa operação de escrita, 
         o usuário obrigatoriamente precisa estar logado e ser um administrador no seu perfil
         """
+
+        # Permite qualquer um visualizar os pets
+        if self.action in ['list', 'retrieve']:
+            return [AllowAny()]
 
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
             return [IsAdminUser()]
