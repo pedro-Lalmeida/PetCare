@@ -1,3 +1,5 @@
+// Card que vai exibir os pets na interface
+
 function PetCard({ pet }) {
   return (
     <article className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
